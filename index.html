@@ -172,7 +172,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       <ul>
         <li><b>헤비 데이(월 스쿼트, 화 벤치, 목 데드):</b> 램프 후 싱글 1개를 <b>RPE 8에서 멈춥니다</b>(표시 무게는 e1RM 92%). 그다음 백오프는 싱글의 88%로 3분 시계에 맞춰 진행합니다.</li>
         <li>싱글을 "싱글 입력"에 넣으면 e1RM이 갱신되고 다음 주 무게가 전부 따라 올라갑니다. 복귀 첫 6~8주는 <b>주 +5% 상한</b>이 자동 적용됩니다. 건·인대가 근육보다 늦게 돌아오기 때문입니다.</li>
-        <li><b>블록 안의 진행은 두 겹입니다.</b> (1) 싱글 입력으로 e1RM이 오르면 모든 무게가 따라 오릅니다. (2) 템플릿 자체도 매주 조금씩 올라갑니다: 백오프는 싱글의 86 → 91%, 볼륨 데이는 72.5 → 80%에 세트 4 → 6. e1RM이 정체된 주에도 진행이 있고, 둘이 겹쳐도 +5% 상한 안입니다.</li>
+        <li><b>블록 안의 진행은 두 겹입니다.</b> (1) 싱글 입력으로 e1RM이 오르면 모든 무게가 따라 오릅니다. (2) 템플릿 자체도 매주 조금씩 올라갑니다: 백오프는 싱글의 86 → 91%, 볼륨 데이는 72.5 → 80%에 세트 4 → 6. 벤치는 5kg 반올림 때문에 무게가 안 변하므로 백오프 반복이 3 → 4 → 5로 올라갑니다. e1RM이 정체된 주에도 진행이 있고, 둘이 겹쳐도 +5% 상한 안입니다.</li>
         <li><b>볼륨 데이(금 스쿼트, 목 벤치):</b> 마지막 세트 RPE 8을 넘으면 다음 주는 퍼센트 상승을 건너뛰고 세트만 늘립니다. 5~6주차는 일부러 무거운 과부하 구간이고, 강화 블록에서 볼륨이 빠지면서 회복됩니다.</li>
         <li>화요일 데드 스피드 4×3은 셋업 연습입니다. 바 스피드가 떨어지면 세트를 줄이세요. 월요일 벤치 3×5도 같은 목적입니다.</li>
         <li>수요일 저처는 RPE 7 이하. 허리가 무거운 주는 2세트로. 보조운동은 0~2 RIR까지 가되 메인은 절대 실패까지 가지 않습니다.</li>
@@ -391,7 +391,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
         const single = r5(e*sp);
         if(!low){ tbl += sep('<em>싱글</em> · RPE '+srpe+'에서 멈춤 · 시작 e1RM '+Math.round(sp*100)+'%'); tbl += row(single, '1', 'single'); }
         else tbl += sep('컨디션 낮음 · 싱글 생략');
-        const bop = wk.bo || bo[2], boW = r5(single*bop*(low?.95:1)), boSets = dl ? halfSets(bo[0]) : bo[0], boReps = wk.boreps || bo[1];
+        const bop = wk.bo || bo[2], boW = r5(single*bop*(low?.95:1)), boSets = dl ? halfSets(bo[0]) : bo[0], boReps = wk.boreps || ((B==='acc' && k==='bp') ? String(3+Math.floor(st.week/2)) : bo[1]);
         tbl += sep('<em>헤비 백오프</em> · 싱글의 '+Math.round(bop*100)+'% · 3분 시계');
         tbl += row(boW, boSets+'×'+boReps, 'heavy');
         if(d.second && !dl){ const s=d.second; tbl += sep(s.name+' · e1RM '+Math.round(s.p*100)+'%'+(s.cls==='sup'?' · 2분 시계, 바 스피드 유지':' · 경기 셋업 그대로')); tbl += row(r5(E(s.lift)*s.p), s.sets, s.cls); }
