@@ -1,7 +1,7 @@
 {
-  "name": "점심시간 5/3/1",
-  "short_name": "5/3/1",
-  "description": "주 5회 점심 파워리프팅 프로그램 — 세트 무게와 원판 계산",
+  "name": "점심시간 파워리프팅",
+  "short_name": "점심 PL",
+  "description": "주 5회 60분 점심 파워리프팅 — e1RM 기반 세트 무게와 원판 계산",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
