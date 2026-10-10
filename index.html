@@ -116,7 +116,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
   <header>
     <div class="label">파워리프팅 · 83kg급 목표 · 주 5회 60분 점심 세션 · 복귀 블록</div>
     <h1>점심시간 파워리프팅</h1>
-    <p class="sub">하루 한 종목 헤비(싱글 @8 + 백오프), 2차 종목 가볍게, 길항 슈퍼세트 보조. 모든 무게는 종목별 e1RM에서 계산되고, 헤비 데이 싱글이 e1RM을 매주 갱신합니다. 스쿼트 2회·벤치 4회·데드 2회.</p>
+    <p class="sub">하루 한 종목 헤비(탑세트 + 백오프), 2차 종목 가볍게, 길항 슈퍼세트 보조. 모든 무게는 상단 e1RM에서 퍼센트로 계산되고, 블록 안에서 주차마다 정해진 비율로 무게 또는 세트가 올라갑니다. 블록이 끝나면 e1RM을 직접 고쳐 다음 블록을 시작합니다. 스쿼트 2회·벤치 4회·데드 2회.</p>
   </header>
 
   <div class="blockbar">
@@ -130,32 +130,22 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
 
   <section class="settings" aria-label="설정">
     <div class="fields">
-      <label class="field"><span class="label">스쿼트 e1RM</span><input id="sq" type="number" step="2.5" inputmode="decimal"><small>kg</small></label>
+      <label class="field"><span class="label">스쿼트 e1RM</span><input id="sq" type="number" step="2.5" inputmode="decimal"><small>여기를 고치면 모든 주차 반영</small></label>
       <label class="field"><span class="label">벤치 e1RM</span><input id="bp" type="number" step="2.5" inputmode="decimal"><small>터치앤고 기준</small></label>
       <label class="field"><span class="label">스모 데드 e1RM</span><input id="dl" type="number" step="2.5" inputmode="decimal"><small>kg</small></label>
       <label class="field"><span class="label">금요일 벤치 변형</span>
         <select id="fri"><option value="pause">포즈 벤치</option><option value="cg">클로즈그립</option></select><small>벤치 e1RM × 90%</small></label>
     </div>
     <div class="toggles">
-      <label><input type="checkbox" id="low"> 오늘 컨디션 낮음 (수면·통증·스트레스) → 싱글 생략, 백오프 −5%</label>
-      <label><input type="checkbox" id="deload"> 디로드 주 → 세트 절반, 싱글 @7, 보조 절반</label>
-    </div>
-    <div class="calc">
-      <div class="label">싱글 입력 · 헤비 데이 싱글(또는 탑세트)로 e1RM 갱신 · 복귀 보호를 위해 주 +5% 상한</div>
-      <div class="fields">
-        <label class="field"><span class="label">종목</span><select id="c_lift"><option value="sq">스쿼트</option><option value="bp">벤치</option><option value="dl">스모 데드</option></select></label>
-        <label class="field"><span class="label">무게</span><input id="c_w" type="number" step="2.5" inputmode="decimal" value="135"></label>
-        <label class="field"><span class="label">반복</span><input id="c_r" type="number" min="1" max="10" inputmode="numeric" value="1"></label>
-        <label class="field"><span class="label">RPE</span><select id="c_rpe"><option>6</option><option>6.5</option><option>7</option><option>7.5</option><option selected>8</option><option>8.5</option><option>9</option><option>9.5</option><option>10</option></select></label>
-      </div>
-      <div class="calcout" id="calcout"></div>
+      <label><input type="checkbox" id="low"> 오늘 컨디션 낮음 (수면·통증·스트레스) → 탑세트 생략, 나머지 −5%</label>
+      <label><input type="checkbox" id="deload"> 디로드 주 → 세트 절반, 무게 −5%, 보조 절반</label>
     </div>
   </section>
 
   <nav class="weeks" id="weeks" aria-label="주차 선택"></nav>
 
   <div class="legend">
-    <span><i class="k" style="background:var(--single)"></i>싱글 @8</span>
+    <span><i class="k" style="background:var(--single)"></i>탑세트</span>
     <span><i class="k" style="background:var(--heavy)"></i>헤비 백오프</span>
     <span><i class="k" style="background:var(--vol)"></i>볼륨·스피드</span>
     <span><i class="k" style="background:var(--tech)"></i>기술·가벼움</span>
@@ -170,21 +160,20 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     <div class="rule">
       <h2>축적 블록 (6주) 진행</h2>
       <ul>
-        <li><b>헤비 데이(월 스쿼트, 화 벤치, 목 데드):</b> 램프 후 싱글 1개를 <b>RPE 8에서 멈춥니다</b>(표시 무게는 e1RM 92%). 그다음 백오프는 싱글의 88%로 3분 시계에 맞춰 진행합니다.</li>
-        <li>싱글을 "싱글 입력"에 넣으면 e1RM이 갱신되고 다음 주 무게가 전부 따라 올라갑니다. 복귀 첫 6~8주는 <b>주 +5% 상한</b>이 자동 적용됩니다. 건·인대가 근육보다 늦게 돌아오기 때문입니다.</li>
-        <li><b>블록 안의 진행은 두 겹입니다.</b> (1) 싱글 입력으로 e1RM이 오르면 모든 무게가 따라 오릅니다. (2) 템플릿 자체도 매주 조금씩 올라갑니다: 백오프는 싱글의 86 → 91%, 볼륨 데이는 72.5 → 80%에 세트 4 → 6. 벤치는 5kg 반올림 때문에 무게가 안 변하므로 백오프 반복이 3 → 4 → 5로 올라갑니다. e1RM이 정체된 주에도 진행이 있고, 둘이 겹쳐도 +5% 상한 안입니다.</li>
-        <li><b>볼륨 데이(금 스쿼트, 목 벤치):</b> 마지막 세트 RPE 8을 넘으면 다음 주는 퍼센트 상승을 건너뛰고 세트만 늘립니다. 5~6주차는 일부러 무거운 과부하 구간이고, 강화 블록에서 볼륨이 빠지면서 회복됩니다.</li>
-        <li>화요일 데드 스피드 4×3은 셋업 연습입니다. 바 스피드가 떨어지면 세트를 줄이세요. 월요일 벤치 3×5도 같은 목적입니다.</li>
-        <li>수요일 저처는 RPE 7 이하. 허리가 무거운 주는 2세트로. 보조운동은 0~2 RIR까지 가되 메인은 절대 실패까지 가지 않습니다.</li>
-        <li>6주 끝나면 강화 블록으로. 중간 디로드는 아래 지표에 걸릴 때만.</li>
+        <li><b>모든 무게는 상단 e1RM × 그 주의 퍼센트</b>입니다. e1RM을 고치면 모든 주차가 다시 계산됩니다. 블록 중간에는 e1RM을 건드리지 않습니다.</li>
+        <li><b>헤비 데이(월 스쿼트, 화 벤치, 목 데드):</b> 탑세트가 3회 @82% → 3회 @84% → 2회 @87% → 2회 @89% → 1회 @91% → 1회 @93%로 올라갑니다. 백오프는 76 → 83%, 3×3(데드 2×3). 벤치 백오프는 반복이 3 → 4 → 5.</li>
+        <li><b>볼륨 데이(금 스쿼트, 목 벤치):</b> 72.5 → 80%(벤치는 −2.5%p)에 세트가 4 → 5 → 6. 5~6주차는 일부러 무거운 과부하 구간이고 강화 블록에서 회복됩니다.</li>
+        <li>화요일 데드 스피드는 65 → 70% 4×3, 월요일 벤치 기술은 60% 3×5 고정. 수요일 저처는 48 → 58%.</li>
+        <li>탑세트는 퍼센트대로 하되 <b>RPE 9를 넘기지 않습니다.</b> 느리면 거기서 멈추고 백오프를 5% 내립니다. 쉬워도 무게를 올리지 않습니다. 쉬운 게 쌓이면 블록 끝 e1RM이 그만큼 올라갑니다.</li>
+        <li>6주 끝나면 강화 블록으로 바로 넘어갑니다. 중간 디로드는 지표에 걸릴 때만.</li>
       </ul>
     </div>
     <div class="rule">
       <h2>디로드는 반응형</h2>
       <ul>
         <li>고정 4주 디로드는 하지 않습니다(Coleman 2024: 고정 디로드가 하체 근력 증가를 줄임). 아래 중 <b>둘 이상</b>이면 "디로드 주" 체크.</li>
-        <li>같은 무게의 싱글이 2주 연속 RPE 8.5 이상</li>
-        <li>e1RM이 전주 대비 5% 이상 하락</li>
+        <li>탑세트가 2주 연속 RPE 9를 넘음</li>
+        <li>탑세트나 백오프를 정해진 반복으로 못 채움</li>
         <li>백오프 마지막 세트가 2주 연속 목표 RPE 초과</li>
         <li>수면 질 저하, 관절·허리 통증, 벌크 중 체중 정체</li>
         <li>디로드는 1주, 강도는 유지하고 세트만 절반. 축적 → 강화 사이에는 넣지 않고 바로 넘어갑니다. 강화 → 피킹 사이에는 1주 넣습니다.</li>
@@ -193,7 +182,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     <div class="rule">
       <h2>60분 안에 끝내기</h2>
       <ul>
-        <li>순서: 워밍업 6분 → 램프 → 싱글 → 백오프(3분 시계) → 2차 종목 → 슈퍼세트 보조. <b>시간이 모자라면 뒤에서부터</b> 버리고, 싱글은 절대 버리지 않습니다.</li>
+        <li>순서: 워밍업 6분 → 램프 → 탑세트 → 백오프(3분 시계) → 2차 종목 → 슈퍼세트 보조. <b>시간이 모자라면 뒤에서부터</b> 버리고, 탑세트는 절대 버리지 않습니다.</li>
         <li>2차 종목 워밍업은 메인 백오프 휴식 중에 끼워 넣습니다. 램프는 첫 종목만 풀로.</li>
         <li>휴식: RPE 8 이상 3분, 볼륨 세트 2~3분, 보조 60~75초. 보조는 당기기와 미는 운동만 묶습니다(같은 패턴 둘은 묶지 않음).</li>
         <li>워밍업 6분: 계단·빠른 걷기 90초 → 힙힌지·맨몸 스쿼트 60초 → 데드버그 5/쪽(갈비 내리고 브레이싱) → 빈 바 2세트. 폼롤러·스트레칭 없음.</li>
@@ -207,27 +196,27 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     <div class="rule">
       <h2>강화 블록 (3주) 진행</h2>
       <ul>
-        <li>헤비 데이 싱글은 <b>RPE 8.5~9</b>까지(1주 8.5, 2주 9, 3주 9). 백오프는 싱글의 93% 2×2 → 95% 2×2 → 97% 2×1로 올라갑니다.</li>
-        <li>볼륨 데이는 3×3으로 바뀌고 80 → 82 → 84%로 올라갑니다. 보조는 절반, 스피드·기술 슬롯은 유지합니다.</li>
-        <li>e1RM 갱신 상한은 +5%로 같습니다. 축적을 거친 뒤라 싱글이 빠르게 오르면 상한에 걸릴 수 있는데, 그게 정상입니다.</li>
-        <li>3주 끝나면 디로드 1주 후 다시 축적으로 돌아가거나, 대회가 잡혔으면 피킹으로.</li>
+        <li>탑세트 2회 @90% → 1회 @94% → 1회 @97%. 백오프 85% 2×2 → 87% 2×2 → 89% 2×1. 볼륨 데이 3×3 @ 80 → 82 → 84%. 보조는 절반.</li>
+        <li><b>3주차 싱글이 e1RM 테스트입니다.</b> 97% 싱글이 RPE 8이면 새 e1RM = 그 무게 ÷ 0.92, RPE 9면 ÷ 0.955, RPE 10이면 그 무게가 1RM. 상단 e1RM을 그 값으로 고치고 디로드 1주 후 축적을 다시 시작합니다.</li>
+        <li>복귀 첫 순환에서는 새 e1RM을 이전보다 <b>최대 +7%</b>까지만 올리세요. 근육·신경계보다 건이 늦게 돌아옵니다. 두 번째 순환부터 제한 없음.</li>
+        <li>대회가 잡혔으면 디로드 1주 후 피킹으로.</li>
         <li>85 → 83kg 감량은 이 블록과 그 전 축적 후반에 걸쳐 끝냅니다. 피킹 중 칼로리 적자는 피하세요.</li>
       </ul>
     </div>
     <div class="rule">
       <h2>블록 순환 (약 10주)</h2>
       <div class="tablewrap"><table><tbody>
-        <tr><td><b>축적</b></td><td>6주</td><td>싱글 @8 + 백오프 3×3, 볼륨 4→6세트</td></tr>
-        <tr><td><b>강화</b></td><td>3주</td><td>싱글 @8.5~9 + 2×2, 볼륨 3×3</td></tr>
+        <tr><td><b>축적</b></td><td>6주</td><td>탑 3회@82% → 1회@93%, 백오프 76→83%, 볼륨 4→6세트</td></tr>
+        <tr><td><b>강화</b></td><td>3주</td><td>탑 90→97%, 백오프 2×2, 볼륨 3×3 · 3주차 싱글 = e1RM 테스트</td></tr>
         <tr><td><b>디로드</b></td><td>1주</td><td>세트 절반, 강도 유지</td></tr>
         <tr><td><b>피킹</b></td><td>4주</td><td>대회가 잡혔을 때만</td></tr>
       </tbody></table></div>
-      <p class="note" style="margin:10px 0 0">85kg에 도달할 때까지는 축적 → 강화 → 디로드를 반복합니다. 두 번째 순환부터 e1RM 상한을 풀어도 됩니다.</p>
+      <p class="note" style="margin:10px 0 0">85kg에 도달할 때까지는 축적 → 강화 → 디로드를 반복합니다. 순환마다 e1RM을 한 번 고치는 것이 유일한 수동 조정입니다.</p>
     </div>
     <div class="rule">
       <h2>혼자 할 때</h2>
       <ul>
-        <li>RPE 9 싱글은 측면 촬영 필수. 깊이·포즈 확인용입니다.</li>
+        <li>94% 이상 싱글은 측면 촬영 필수. 깊이·포즈 확인용입니다.</li>
         <li>싱글이 느리게 올라가면 그날은 거기서 멈추고 백오프 무게를 5% 내립니다.</li>
         <li>벤치 싱글은 세이프티 높이를 먼저 빈 바로 확인하고, 콜라를 끼우지 않습니다.</li>
       </ul>
@@ -287,8 +276,8 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
   };
 
   const WEEKS = {
-    acc: [1,2,3,4,5,6].map(i=>({k:i+'주', t:'볼륨 '+(4+Math.floor((i-1)/2))+'세트 · '+Math.round((.725+.015*(i-1))*100)+'%', sets:4+Math.floor((i-1)/2), srpe:8, bo:.86+.01*(i-1), vp:.725+.015*(i-1), zp:.48+.02*(i-1)})),
-    int: [{k:'1주',t:'싱글 @8.5 · 2×2',srpe:8.5,bo:.93,vp:.80},{k:'2주',t:'싱글 @9 · 2×2',srpe:9,bo:.95,vp:.82},{k:'3주',t:'싱글 @9 · 2×1',srpe:9,bo:.97,vp:.84,boreps:'1'}],
+    acc: [0,1,2,3,4,5].map(i=>({k:(i+1)+'주', t:'탑 '+[3,3,2,2,1,1][i]+'회 @'+Math.round([.82,.84,.87,.89,.91,.93][i]*100)+'%', top:[.82,.84,.87,.89,.91,.93][i], topr:[3,3,2,2,1,1][i], bo:[.76,.78,.80,.81,.82,.83][i], sets:4+Math.floor(i/2), vp:.725+.015*i, sp:[.65,.65,.675,.675,.70,.70][i], zp:.48+.02*i, fp:.70+.01*i})),
+    int: [{k:'1주',t:'탑 2회 @90%',top:.90,topr:2,bo:.85,vp:.80,sp:.72,zp:.45,fp:.76},{k:'2주',t:'탑 1회 @94%',top:.94,topr:1,bo:.87,vp:.82,sp:.72,zp:.45,fp:.77},{k:'3주',t:'탑 1회 @97%',top:.97,topr:1,bo:.89,vp:.84,sp:.72,zp:.45,fp:.78,boreps:'1'}],
     peak: [
       {k:'1주', t:'볼륨 감소', main:[[.80,'3'],[.80,'3'],[.80,'3'],[.85,'2']], fri:[.75,'3×3'], accf:.5},
       {k:'2주', t:'강도 상승', main:[[.85,'2'],[.85,'2'],[.90,'1']], fri:[.75,'2×3'], accf:.5},
@@ -296,27 +285,25 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       {k:'4주', t:'대회 주', main:[[.70,'2'],[.70,'2']], fri:null, accf:0, comp:true}
     ]
   };
-  // single start % of e1RM by RPE target
-  const SINGLE = {7:.89, 8:.92, 8.5:.94, 9:.955};
 
   const DAYS = [
     {dow:'월', name:'스쿼트 헤비', kind:'heavy', lift:'sq', second:{lift:'bp', name:'벤치 기술', p:.60, sets:'3×5', cls:'tech'},
       acc:[['레그컬','3×12'],['행잉 레그레이즈','3×12'],['불가리안 스플릿 스쿼트','2×10/다리',1]],
-      tl:[['0','워밍업'],['6','램프'],['17','싱글'],['21','백오프 ×3'],['31','벤치 기술'],['41','보조 슈퍼세트'],['52','정리']]},
+      tl:[['0','워밍업'],['6','램프'],['17','탑세트'],['21','백오프 ×3'],['31','벤치 기술'],['41','보조 슈퍼세트'],['52','정리']]},
     {dow:'화', name:'벤치 헤비', kind:'heavy', lift:'bp', second:{lift:'dl', name:'데드 스피드 · 셋업 연습', p:.65, sets:'4×3', cls:'sup'},
       acc:[['바벨 로우 (백오프와 슈퍼세트)','3×8'],['페이스풀','2×15'],['인클라인 덤벨 벤치','2×10',1]],
-      tl:[['0','워밍업'],['6','램프'],['15','싱글'],['19','백오프 ×3 + 로우'],['30','데드 램프'],['34','스피드 ×4'],['44','페이스풀'],['50','정리']]},
+      tl:[['0','워밍업'],['6','램프'],['15','탑세트'],['19','백오프 ×3 + 로우'],['30','데드 램프'],['34','스피드 ×4'],['44','페이스풀'],['50','정리']]},
     {dow:'수', name:'저처 · 코어', kind:'zercher',
       acc:[['데드버그','3×10/쪽'],['팔로프 프레스','3×12/쪽'],['백 익스텐션','3×12'],['사이드 플랭크','3×30초/쪽'],['풀업 또는 랫풀다운','3×8']],
       tl:[['0','워밍업'],['6','저처 램프'],['12','저처 ×3'],['24','코어 서킷'],['38','풀업'],['45','정리']]},
     {dow:'목', name:'데드 헤비', kind:'heavy', lift:'dl', volume:{lift:'bp', name:'벤치 볼륨', p:.72, reps:6, cls:'sup'},
       acc:[['체스트 서포티드 로우 (벤치와 슈퍼세트)','3×10'],['루마니안 데드리프트','2×8',1],['리어델트 레이즈','2×15',1]],
-      tl:[['0','워밍업'],['6','램프'],['17','싱글'],['21','백오프 ×2'],['28','벤치 볼륨 + 로우'],['46','RDL'],['54','정리']]},
+      tl:[['0','워밍업'],['6','램프'],['17','탑세트'],['21','백오프 ×2'],['28','벤치 볼륨 + 로우'],['46','RDL'],['54','정리']]},
     {dow:'금', name:'스쿼트 볼륨', kind:'volume', lift:'sq', p:.75, reps:5, second:{lift:'fri', p:.70, sets:'3×5'},
       acc:[['덤벨 로우 (벤치와 슈퍼세트)','3×10'],['레그프레스','2×12',1],['카프 레이즈','2×15',1]],
       tl:[['0','워밍업'],['6','램프'],['15','스쿼트 볼륨'],['33','벤치 변형 + 로우'],['48','레그프레스'],['55','정리']]}
   ];
-  const BACKOFF = {acc:{sq:[3,'3',.88], bp:[3,'3',.88], dl:[2,'3',.88]}, int:{sq:[2,'2',.95], bp:[2,'2',.95], dl:[2,'2',.95]}};
+  const BACKOFF = {acc:{sq:[3,'3'], bp:[3,'3'], dl:[2,'3']}, int:{sq:[2,'2'], bp:[2,'2'], dl:[2,'2']}};
 
   const DEF = {sq:150, bp:90, dl:180, fri:'pause', week:0, block:'acc', low:false, deload:false};
   let st = Object.assign({}, DEF);
@@ -329,7 +316,6 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
   $('deload').checked = !!st.deload; $('deload').addEventListener('change', e => { st.deload = e.target.checked; save(); render(); });
   $('blockseg').addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; st.block=b.dataset.b; st.week=0; save(); render(); });
   $('weeks').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; st.week=parseInt(b.dataset.i); save(); render(); });
-  ['c_lift','c_w','c_r','c_rpe'].forEach(id => $(id).addEventListener('input', renderCalc));
 
   const E = k => k==='fri' ? r25(st.bp*0.9) : st[k];
 
@@ -345,24 +331,12 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
   const half = s => s.replace(/^(\d+)/, m => Math.max(1, Math.ceil(m/2)));
   const halfSets = n => Math.max(1, Math.ceil(n/2));
 
-  function renderCalc(){
-    const w = parseFloat($('c_w').value)||0, r = Math.min(10, Math.max(1, parseInt($('c_r').value)||1)), rpe = parseFloat($('c_rpe').value), k = $('c_lift').value;
-    if(!(w>0)){ $('calcout').innerHTML=''; return; }
-    const est = w/(RPE[rpe][r-1]/100), cur = st[k];
-    const cap = cur*1.05, capped = est > cap;
-    const newE = r25(Math.min(est, cap));
-    $('calcout').innerHTML = '<span>'+LIFTN[k]+' 추정 <b>'+fmt(r25(est))+'</b> kg</span><span>→ 적용 e1RM <b>'+fmt(newE)+'</b> ('+(newE-cur>=0?'+':'')+fmt(newE-cur)+')</span>'+
-      (capped?'<span class="cap">복귀 보호 상한 +5% 적용. 다음 주 다시 입력하면 더 올라갑니다.</span>':'')+
-      '<button type="button" id="applyE">e1RM 적용</button>';
-    $('applyE').addEventListener('click', ()=>{ st[k]=newE; $(k).value=newE; save(); render(); });
-  }
-
   function render(){
     const B = st.block, W = WEEKS[B]; if(st.week>=W.length) st.week=0; const wk = W[st.week];
     document.querySelectorAll('#blockseg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.b===B));
     ['acc','int','peak'].forEach(k => $('rules-'+k).hidden = B!==k);
-    $('blockdesc').textContent = B==='acc' ? '싱글 @8로 매주 e1RM을 확인하면서 볼륨 데이 세트를 4 → 6으로 늘리는 구간. 체중을 올리는 구간입니다.'
-      : B==='int' ? '싱글을 @9까지 올리고 볼륨을 줄여 근력을 표현하는 3주. 83kg급 감량도 여기서 끝냅니다.'
+    $('blockdesc').textContent = B==='acc' ? '탑세트 3회 @82% → 1회 @93%, 백오프 76 → 83%, 볼륨 데이 4 → 6세트로 매주 올라가는 6주. 체중을 올리는 구간입니다.'
+      : B==='int' ? '탑세트 90 → 94 → 97%로 올리고 볼륨을 줄여 근력을 표현하는 3주. 3주차 싱글로 다음 e1RM을 정합니다.'
       : 'e1RM 기준 피킹 4주. 볼륨 없이 강도만 올리고 대회 주에 쉽니다.';
     $('weeks').innerHTML = W.map((w,i)=>'<button type="button" data-i="'+i+'" aria-pressed="'+(i===st.week)+'">'+w.k+'<span>'+w.t+'</span></button>').join('');
     const low = !!st.low && B!=='peak', dl = !!st.deload && B!=='peak';
@@ -386,36 +360,35 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
         } else { name='코어'; accf = wk.comp?0:.6; accLabel='코어 · 가볍게'; }
       }
       else if(d.kind==='heavy'){
-        const k=d.lift, e=E(k), bo=BACKOFF[B][k];
-        const srpe = dl ? 7 : wk.srpe, sp = SINGLE[srpe];
-        const single = r5(e*sp);
-        if(!low){ tbl += sep('<em>싱글</em> · RPE '+srpe+'에서 멈춤 · 시작 e1RM '+Math.round(sp*100)+'%'); tbl += row(single, '1', 'single'); }
-        else tbl += sep('컨디션 낮음 · 싱글 생략');
-        const bop = wk.bo || bo[2], boW = r5(single*bop*(low?.95:1)), boSets = dl ? halfSets(bo[0]) : bo[0], boReps = wk.boreps || ((B==='acc' && k==='bp') ? String(3+Math.floor(st.week/2)) : bo[1]);
-        tbl += sep('<em>헤비 백오프</em> · 싱글의 '+Math.round(bop*100)+'% · 3분 시계');
+        const k=d.lift, e=E(k), bo=BACKOFF[B][k], f=(low?.95:1)*(dl?.95:1);
+        const topW = r5(e*wk.top*f);
+        if(!low){ tbl += sep('<em>탑세트</em> · e1RM '+Math.round(wk.top*100)+'% · 느리면 거기서 끝'); tbl += row(topW, String(wk.topr), 'single'); }
+        else tbl += sep('컨디션 낮음 · 탑세트 생략');
+        const boW = r5(e*wk.bo*f), boSets = dl ? halfSets(bo[0]) : bo[0], boReps = wk.boreps || ((B==='acc' && k==='bp') ? String(3+Math.floor(st.week/2)) : bo[1]);
+        tbl += sep('<em>헤비 백오프</em> · e1RM '+Math.round(wk.bo*100)+'% · 3분 시계');
         tbl += row(boW, boSets+'×'+boReps, 'heavy');
-        if(d.second && !dl){ const s=d.second; tbl += sep(s.name+' · e1RM '+Math.round(s.p*100)+'%'+(s.cls==='sup'?' · 2분 시계, 바 스피드 유지':' · 경기 셋업 그대로')); tbl += row(r5(E(s.lift)*s.p), s.sets, s.cls); }
-        if(d.volume){ const v=d.volume, sets = B==='int' ? 3 : (wk.sets||4), reps = B==='int' ? 3 : v.reps, p = (wk.vp||v.p) - (B==='int'?0:.025);
-          tbl += sep(v.name+' · e1RM '+Math.round(p*100)+'% · 마지막 세트 RPE 8'); tbl += row(r5(E(v.lift)*p), (dl?halfSets(sets):sets)+'×'+reps, 'sup'); }
+        if(d.second && !dl){ const s=d.second; const sp = s.cls==='sup' ? wk.sp : s.p; tbl += sep(s.name+' · e1RM '+Math.round(sp*100)+'%'+(s.cls==='sup'?' · 2분 시계, 바 스피드 유지':' · 경기 셋업 그대로')); tbl += row(r5(E(s.lift)*sp*f), s.sets, s.cls); }
+        if(d.volume){ const v=d.volume, sets = B==='int' ? 3 : (wk.sets||4), reps = B==='int' ? 3 : v.reps, p = wk.vp - (B==='int'?0:.025);
+          tbl += sep(v.name+' · e1RM '+Math.round(p*100)+'% · 마지막 세트 RPE 8'); tbl += row(r5(E(v.lift)*p*f), (dl?halfSets(sets):sets)+'×'+reps, 'sup'); }
         if(B==='int') accf=.5;
-        if(k==='sq' && !low) note='싱글이 RPE 7이면 5kg 올려 하나 더, 8이면 거기서 끝. 결과를 위 "싱글 입력"에 넣으세요.';
-        if(k==='bp') note='백오프 휴식 중 바벨 로우를 끼웁니다. 데드 스피드는 바 스피드가 떨어지면 세트를 줄입니다.';
+        if(k==='sq' && !low) note='탑세트가 RPE 9를 넘거나 바가 느려지면 그 세트에서 멈추고 백오프를 5% 내립니다. 쉬우면 그대로 진행하고 무게는 올리지 않습니다. 블록 끝에 e1RM을 고칩니다.';
+        if(k==='bp') note='백오프 휴식 중 바벨 로우를 끼웁니다. 벤치 백오프는 5kg 반올림 때문에 반복(3→4→5)으로 진행합니다. 데드 스피드는 바 스피드가 떨어지면 세트를 줄입니다.';
         if(k==='dl') note='데드 백오프는 2세트만. 허리 피로가 오래 남습니다. 벤치 볼륨 휴식 중 체스트 서포티드 로우.';
       }
       else if(d.kind==='volume'){
-        const e=E(d.lift), sets = B==='int' ? 3 : (wk.sets||4), reps = B==='int' ? 3 : d.reps, p = wk.vp || d.p;
+        const e=E(d.lift), sets = B==='int' ? 3 : (wk.sets||4), reps = B==='int' ? 3 : d.reps, p = wk.vp || d.p, f=(low?.95:1)*(dl?.95:1);
         name = '스쿼트 볼륨 + '+(st.fri==='pause'?'포즈 벤치':'클로즈그립');
         tbl += sep('<em>스쿼트 볼륨</em> · e1RM '+Math.round(p*100)+'% · 3분 30초 시계 · 마지막 세트 RPE 8');
-        tbl += row(r5(e*p*(low?.95:1)), (dl?halfSets(sets):sets)+'×'+reps, 'sup');
-        const s=d.second; const sp2 = B==='int' ? .78 : s.p + .01*st.week; const ss = B==='int' ? '3×3' : s.sets;
-        tbl += sep(FRIN[st.fri]+' · 변형 e1RM '+Math.round(sp2*100)+'%'); tbl += row(r5(E('fri')*sp2), dl?half(ss):ss, 'tech');
+        tbl += row(r5(e*p*f), (dl?halfSets(sets):sets)+'×'+reps, 'sup');
+        const s=d.second; const sp2 = wk.fp || s.p; const ss = B==='int' ? '3×3' : s.sets;
+        tbl += sep(FRIN[st.fri]+' · 변형 e1RM '+Math.round(sp2*100)+'%'); tbl += row(r5(E('fri')*sp2*f), dl?half(ss):ss, 'tech');
         if(B==='int') accf=.5;
         note='볼륨 세트는 전부 같은 속도로. 마지막 세트에서 느려지면 다음 주 무게를 유지합니다. 벤치 변형 워밍업은 스쿼트 휴식 중에.';
       }
       else { // zercher
-        const e=E('sq'), p = B==='int' ? .45 : (wk.zp||.50), sets = (B==='acc' && st.week>=3) ? 4 : 3;
-        tbl += sep('저처 스쿼트 · RPE 7 · 스쿼트 e1RM '+Math.round(p*100)+'%');
-        tbl += row(r5(e*p*(low?.95:1)), (dl?halfSets(sets):sets)+'×5');
+        const e=E('sq'), p = wk.zp||.50, sets = (B==='acc' && st.week>=3) ? 4 : 3, f=(low?.95:1)*(dl?.95:1);
+        tbl += sep('저처 스쿼트 · 스쿼트 e1RM '+Math.round(p*100)+'% · RPE 7 이하');
+        tbl += row(r5(e*p*f), (dl?halfSets(sets):sets)+'×5');
         accLabel='코어 서킷 · 짧은 휴식'; if(B==='int') accf=.6;
         note='허리 관리 데이. 저처 다음 날이 데드라서 RPE 7을 넘기지 않습니다. 허리가 무거운 주는 저처 2세트.';
       }
@@ -427,7 +400,6 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       const time = B==='peak' ? '약 40분' : (d.kind==='zercher' ? '약 45분' : '약 55분');
       return '<article class="day"><div class="dayhead"><span class="dow">'+d.dow+'</span><h3>'+name+'</h3><span class="time">'+time+'</span></div>'+table+accBlock+tl+(note?'<div class="note">'+note+'</div>':'')+'</article>';
     }).join('');
-    renderCalc();
   }
   render();
 })();
