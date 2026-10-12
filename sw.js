@@ -1,5 +1,5 @@
 // 점심시간 5/3/1 — 오프라인 캐시. 파일을 갱신하면 VERSION을 올리세요.
-const VERSION = 'v8';
+const VERSION = 'v9';
 const CACHE = 'lunch531-' + VERSION;
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-512-maskable.png'];
 
