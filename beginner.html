@@ -157,7 +157,7 @@ tr.work td.w,tr.work td.r{color:var(--accent)}
         <li>빈 바로 5회. 폼이 괜찮으면 5kg(상체 2.5kg) 올려 다시 5회.</li>
         <li>바 스피드가 눈에 띄게 느려지는 세트가 나오면 <b>그 직전 무게</b>가 첫 작업 무게입니다. 그걸로 3×5.</li>
         <li>너무 가볍게 시작하는 게 맞습니다. 2~3주 안에 금방 따라잡고, 폼이 굳을 시간이 생깁니다.</li>
-        <li>참고 출발점(성인 남성, 운동 경험 없음): 스쿼트 40, 벤치 30, 데드 60, 프레스 20, 로우 30kg. 여성은 절반 정도.</li>
+        <li>기본 출발점: 스쿼트 40, 벤치 20(빈 바), 데드 40, 프레스 20, 로우 20kg. 처음 열면 이 값이 들어가 있고, 1번 방법으로 확인한 뒤 고치면 됩니다.</li>
       </ol>
       <p class="note" style="margin:10px 0 0">위 입력칸에 그 무게를 넣으면 램프 세트와 원판이 바로 계산됩니다.</p>
     </div>
@@ -190,7 +190,7 @@ tr.work td.w,tr.work td.r{color:var(--accent)}
   const fmt = x => (Math.round(x*100)/100).toString();
   const KEY = 'pl_beginner_v1';
 
-  const DEF = {w:{sq:40, bp:30, dl:60, pr:20, row:30}, reps:{bp:5, pr:5, row:8}, fails:{sq:0,bp:0,dl:0,pr:0,row:0}, done:{sq:0,bp:0,dl:0,pr:0,row:0}, session:0, plate125:false, noOHP:false, today:{}, hist:[]};
+  const DEF = {w:{sq:40, bp:20, dl:40, pr:20, row:20}, reps:{bp:5, pr:5, row:8}, fails:{sq:0,bp:0,dl:0,pr:0,row:0}, done:{sq:0,bp:0,dl:0,pr:0,row:0}, session:0, plate125:false, noOHP:false, today:{}, hist:[]};
   let st = JSON.parse(JSON.stringify(DEF));
   try{ const s = JSON.parse(localStorage.getItem(KEY)||'null'); if(s){ st = Object.assign(st, s); st.w=Object.assign({},DEF.w,s.w||{}); st.reps=Object.assign({},DEF.reps,s.reps||{}); st.fails=Object.assign({},DEF.fails,s.fails||{}); st.done=Object.assign({},DEF.done,s.done||{}); } }catch(e){}
   const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} };
