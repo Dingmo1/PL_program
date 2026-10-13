@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F4E9C" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11151A" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>초심자 선형 프로그램</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: tracker — next-session card first, then start weights, lift cards with ramp + plates + 성공/실패, rules. Same tokens as main app. */
+:root{
+  --bg:#EDF0F3; --surface:#FFFFFF; --fg:#17202A; --muted:#5B6876; --line:#D2D9E0;
+  --accent:#1F4E9C; --accent-soft:#E2EAF6; --ok:#2E7D4F; --bad:#B4282A; --warn:#8A6D1F;
+  --p20:#1E4FA8; --p15:#E3B505; --p10:#2E8B3E; --p5:#F7F7F7; --p25s:#222; --p125:#A9B1B9;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11151A; --surface:#1A2028; --fg:#E5EAF0; --muted:#94A2B0; --line:#2B3540;
+  --accent:#7FA8E6; --accent-soft:#1E2B3D; --ok:#6FCF97; --bad:#F07A72; --warn:#E0B65A; --p25s:#4A4A4A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11151A; --surface:#1A2028; --fg:#E5EAF0; --muted:#94A2B0; --line:#2B3540;
+  --accent:#7FA8E6; --accent-soft:#1E2B3D; --ok:#6FCF97; --bad:#F07A72; --warn:#E0B65A; --p25s:#4A4A4A; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;padding:0 16px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 56px;display:grid;gap:22px}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,6vw,52px);line-height:1}
+.sub{color:var(--muted);margin:6px 0 0;max-width:64ch}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+a{color:var(--accent)}
+.topnav{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+
+.next{background:var(--accent);color:#fff;border-radius:12px;padding:18px;display:grid;gap:8px}
+.next .big{font:700 34px var(--display);line-height:1}
+.next p{margin:0;font-size:14px;opacity:.9}
+.next .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.next button{font:600 16px var(--display);padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.next button.primary{background:#fff;color:var(--accent);border-color:#fff}
+
+.settings{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.field{display:grid;gap:4px}
+.field input,.field select{font:600 22px var(--display);font-variant-numeric:tabular-nums;width:100%;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.field small{color:var(--muted);font-size:12px}
+.toggles{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px}
+.toggles label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.lifts{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.lift{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.lift.off{opacity:.55}
+.lifthead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.lifthead h3{font-size:22px}
+.lifthead .w{margin-left:auto;font:700 30px var(--display);font-variant-numeric:tabular-nums;color:var(--accent)}
+.target{font-size:14px;color:var(--muted)}
+.target b{color:var(--fg);font-family:var(--display);font-size:18px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:500;color:var(--muted);font-size:12px;padding:4px 6px;border-bottom:1px solid var(--line)}
+td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.w{font:600 20px var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.r{font:600 17px var(--display);white-space:nowrap}
+tr.work td.w,tr.work td.r{color:var(--accent)}
+.plates{display:flex;gap:2px;align-items:center;flex-wrap:wrap}
+.pl{display:inline-block;border-radius:2px;width:7px;border:1px solid rgba(0,0,0,.25)}
+.pl.p20{height:28px;background:var(--p20)} .pl.p15{height:24px;background:var(--p15)} .pl.p10{height:20px;background:var(--p10)}
+.pl.p5{height:16px;background:var(--p5)} .pl.p2{height:13px;background:var(--p25s)} .pl.p1{height:11px;background:var(--p125)}
+.pltext{font-size:11px;color:var(--muted);margin-left:6px;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{font:600 16px var(--display);padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;flex:1 1 auto}
+.actions button.ok{border-color:var(--ok);color:var(--ok)}
+.actions button.bad{border-color:var(--bad);color:var(--bad)}
+.hist{font-size:12px;color:var(--muted)}
+.hist b{color:var(--fg)}
+.fail{font-size:12px;color:var(--bad)}
+.acc{display:grid;gap:4px;padding-top:6px;border-top:1px dashed var(--line);font-size:14px}
+.acc ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.acc li{display:flex;justify-content:space-between;gap:12px}
+.acc li span:last-child{font-family:var(--display);font-weight:600;font-size:16px;white-space:nowrap}
+.note{font-size:13px;color:var(--muted);background:var(--accent-soft);border-radius:6px;padding:8px 10px}
+
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.rule h2{font-size:20px;margin-bottom:8px}
+.rule ul,.rule ol{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.rule table{font-size:13px}
+.rule td{padding:5px 6px}
+.legend{display:flex;flex-wrap:wrap;gap:10px 14px;font-size:12px;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;gap:4px;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="label">파워리프팅 입문 · 주 3회 · 세션마다 증량</div>
+    <h1>초심자 선형 프로그램</h1>
+    <p class="sub">스쿼트·벤치·데드리프트를 3×5로 매 세션 조금씩 올립니다. 운동이 끝나면 종목마다 <b>성공</b> 또는 <b>실패</b>를 누르세요. 다음 세션 무게가 자동으로 정해지고, 같은 무게에서 세 번 실패하면 10% 내려 다시 올라갑니다. 보통 3~6개월 뒤 증량이 막히면 중급 프로그램으로 넘어갑니다.</p>
+    <nav class="topnav"><a href="./index.html">← 중급 프로그램 (퇴근 후 파워리프팅)</a></nav>
+  </header>
+
+  <section class="next" aria-label="다음 세션">
+    <div class="label" style="color:#fff;opacity:.8">다음 세션</div>
+    <div class="big" id="nextTitle"></div>
+    <p id="nextDesc"></p>
+    <div class="btns">
+      <button type="button" class="primary" id="finish">이 세션 완료 → 다음으로</button>
+      <button type="button" id="undo">되돌리기</button>
+    </div>
+  </section>
+
+  <section class="settings" aria-label="설정">
+    <div class="label">현재 작업 무게 · 처음엔 빈 바(20kg)부터 시작해 5회가 느려지기 직전 무게를 넣으세요</div>
+    <div class="fields">
+      <label class="field"><span class="label">스쿼트</span><input id="w_sq" type="number" step="2.5" inputmode="decimal"><small>3×5</small></label>
+      <label class="field"><span class="label">벤치프레스</span><input id="w_bp" type="number" step="2.5" inputmode="decimal"><small>3×5</small></label>
+      <label class="field"><span class="label">데드리프트</span><input id="w_dl" type="number" step="2.5" inputmode="decimal"><small>1×5</small></label>
+      <label class="field"><span class="label" id="pressLabel">오버헤드 프레스</span><input id="w_pr" type="number" step="2.5" inputmode="decimal"><small>3×5</small></label>
+      <label class="field"><span class="label">바벨 로우</span><input id="w_row" type="number" step="2.5" inputmode="decimal"><small>3×8</small></label>
+    </div>
+    <div class="toggles">
+      <label><input type="checkbox" id="plate125"> 1.25kg 원판 있음 (상체 +2.5kg 증량)</label>
+      <label><input type="checkbox" id="noOHP"> 오버헤드 프레스 대신 인클라인 벤치 (어깨 불편 시)</label>
+    </div>
+  </section>
+
+  <div class="legend">
+    <span><i class="pl p20"></i>20</span><span><i class="pl p15"></i>15</span><span><i class="pl p10"></i>10</span><span><i class="pl p5"></i>5</span><span><i class="pl p2"></i>2.5</span><span><i class="pl p1"></i>1.25</span>
+    <span>· 20kg 바 한쪽 원판</span>
+  </div>
+
+  <section class="lifts" id="lifts"></section>
+
+  <section class="rules">
+    <div class="rule">
+      <h2>진행 규칙</h2>
+      <ul>
+        <li><b>A 세션:</b> 스쿼트 3×5, 벤치 3×5, 바벨 로우 3×8. <b>B 세션:</b> 스쿼트 3×5, 프레스 3×5, 데드리프트 1×5. 월·수·금에 A-B-A, 다음 주 B-A-B.</li>
+        <li><b>성공</b> = 정해진 세트·반복을 전부 채움 → 다음 세션에 스쿼트·데드 +5kg, 상체 +2.5kg(1.25kg 원판이 있을 때). 1.25kg 원판이 없으면 상체는 <b>3×5 → 3×6 성공 후 +5kg</b>으로 두 세션에 한 번 올립니다.</li>
+        <li><b>실패</b> = 한 개라도 못 채움 → 같은 무게 유지. 같은 무게에서 <b>3번 실패하면 10% 내리고</b>(5kg 단위 반올림) 다시 올라갑니다.</li>
+        <li>데드리프트는 1세트 5회만. 램프 세트가 워밍업이자 볼륨입니다. 무게가 스쿼트를 한참 앞서가면 정상입니다.</li>
+        <li>세트 간 휴식: 쉬운 초반에는 2분, 무거워지면 3~5분. 휴식을 줄여서 빨리 끝내려 하지 마세요.</li>
+        <li>운동 안 하는 날은 쉽니다. 선형 진행은 회복이 전부입니다. 잠 7시간, 체중 1kg당 단백질 1.6g 이상.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h2>시작 무게 정하기</h2>
+      <ol>
+        <li>빈 바로 5회. 폼이 괜찮으면 5kg(상체 2.5kg) 올려 다시 5회.</li>
+        <li>바 스피드가 눈에 띄게 느려지는 세트가 나오면 <b>그 직전 무게</b>가 첫 작업 무게입니다. 그걸로 3×5.</li>
+        <li>너무 가볍게 시작하는 게 맞습니다. 2~3주 안에 금방 따라잡고, 폼이 굳을 시간이 생깁니다.</li>
+        <li>참고 출발점(성인 남성, 운동 경험 없음): 스쿼트 40, 벤치 30, 데드 60, 프레스 20, 로우 30kg. 여성은 절반 정도.</li>
+      </ol>
+      <p class="note" style="margin:10px 0 0">위 입력칸에 그 무게를 넣으면 램프 세트와 원판이 바로 계산됩니다.</p>
+    </div>
+    <div class="rule">
+      <h2>언제 졸업하는가</h2>
+      <ul>
+        <li>스쿼트에서 10% 감량을 두 번 했는데도 이전 최고 무게를 못 넘기면, 세션 단위 증량이 끝난 겁니다. 보통 3~6개월.</li>
+        <li>그때 <a href="./index.html">중급 프로그램</a>으로 넘어갑니다. 입력할 e1RM은 여기 마지막 3×5 성공 무게 × 1.15 정도로 잡으면 맞습니다.</li>
+        <li>상체(벤치·프레스)가 먼저 막히는 경우가 많습니다. 그러면 상체만 "3×5 → 3×6 → +무게" 방식으로 바꾸고 하체는 계속 선형으로 갑니다.</li>
+        <li>허리나 무릎이 아프면 무게 문제보다 폼 문제입니다. 10% 내리고 측면 촬영으로 깊이·바 경로를 확인하세요.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h2>폼 한 줄씩</h2>
+      <ul>
+        <li><b>스쿼트:</b> 숨 크게 → 배에 힘 → 무릎을 발끝 방향으로 밀며 앉기 → 고관절이 무릎보다 낮게 → 가슴 들고 일어나기.</li>
+        <li><b>벤치:</b> 견갑골 모아 내리기, 발바닥 바닥, 바는 명치 아래로, 팔꿈치 45도. 세이프티 바를 가슴 바로 아래 높이에.</li>
+        <li><b>데드:</b> 바가 발 중앙, 정강이가 바에 닿을 때까지 무릎 굽히기, 등 평평, 바를 다리에 붙여 끌기, 락아웃은 엉덩이로.</li>
+        <li><b>프레스:</b> 엉덩이·배 조이고, 바가 얼굴을 지나면 머리를 바 아래로 넣기. 어깨가 아프면 인클라인 벤치로.</li>
+        <li><b>로우:</b> 상체 45도 이상 숙이고, 반동 없이 배꼽 쪽으로 당기기.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const rnd = (x, step) => Math.round(x/step)*step;
+  const fmt = x => (Math.round(x*100)/100).toString();
+  const KEY = 'pl_beginner_v1';
+
+  const DEF = {w:{sq:40, bp:30, dl:60, pr:20, row:30}, reps:{bp:5, pr:5, row:8}, fails:{sq:0,bp:0,dl:0,pr:0,row:0}, done:{sq:0,bp:0,dl:0,pr:0,row:0}, session:0, plate125:false, noOHP:false, today:{}, hist:[]};
+  let st = JSON.parse(JSON.stringify(DEF));
+  try{ const s = JSON.parse(localStorage.getItem(KEY)||'null'); if(s){ st = Object.assign(st, s); st.w=Object.assign({},DEF.w,s.w||{}); st.reps=Object.assign({},DEF.reps,s.reps||{}); st.fails=Object.assign({},DEF.fails,s.fails||{}); st.done=Object.assign({},DEF.done,s.done||{}); } }catch(e){}
+  const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){} };
+
+  const A = ['sq','bp','row'], B = ['sq','pr','dl'];
+  const isA = () => st.session % 2 === 0;
+  const NAME = {sq:'스쿼트', bp:'벤치프레스', dl:'데드리프트', pr:'오버헤드 프레스', row:'바벨 로우'};
+  const name = k => (k==='pr' && st.noOHP) ? '인클라인 벤치' : NAME[k];
+  const SETS = {sq:3, bp:3, dl:1, pr:3, row:3};
+  const LOWER = {sq:true, dl:true};
+  const step = () => st.plate125 ? 2.5 : 5;
+  const inc = k => LOWER[k] ? 5 : (st.plate125 ? 2.5 : 5);
+  const targetReps = k => LOWER[k] ? 5 : (st.reps[k] || (k==='row'?8:5));
+  const baseReps = k => k==='row' ? 8 : 5;
+
+  ['sq','bp','dl','pr','row'].forEach(k => { const el=$('w_'+k); el.value = st.w[k]; el.addEventListener('input', e => { st.w[k] = parseFloat(e.target.value)||0; save(); render(); }); });
+  $('plate125').checked = st.plate125; $('plate125').addEventListener('change', e => { st.plate125 = e.target.checked; save(); render(); });
+  $('noOHP').checked = st.noOHP; $('noOHP').addEventListener('change', e => { st.noOHP = e.target.checked; save(); render(); });
+
+  function plates(w){
+    let side = (w-20)/2; if(side<=0) return '<span class="pltext">빈 바</span>';
+    const P=[[20,'p20'],[15,'p15'],[10,'p10'],[5,'p5'],[2.5,'p2'],[1.25,'p1']];
+    let html='', list=[];
+    for(const [p,c] of P){ if(p===1.25 && !st.plate125) continue; while(side>=p-1e-9){ side-=p; html+='<i class="pl '+c+'"></i>'; list.push(p); } }
+    if(side>0.01) return html+'<span class="pltext">'+list.join('+')+' (+'+fmt(side)+' 부족)</span>';
+    return html+'<span class="pltext">'+list.join('+')+'</span>';
+  }
+  const row = (w, reps, cls) => '<tr class="'+(cls||'')+'"><td class="w">'+fmt(w)+'</td><td class="r">'+reps+'</td><td><div class="plates">'+plates(w)+'</div></td></tr>';
+
+  function ramp(k, w){
+    // ramp sets: bar, 50%, 70%, 85% (skip those below bar+5)
+    const out=[['20','×10']]; const pcts=[.5,.7,.85]; const reps=['×5','×3','×2'];
+    pcts.forEach((p,i)=>{ const x = rnd(w*p, step()); if(x>22.5 && x<w) out.push([fmt(x), reps[i]]); });
+    return out;
+  }
+
+  function mark(k, ok){
+    if(st.today[k]!==undefined) return;
+    st.today[k] = ok; save(); render();
+  }
+
+  function finish(){
+    const lifts = isA()?A:B;
+    const snap = JSON.parse(JSON.stringify({w:st.w, reps:st.reps, fails:st.fails, done:st.done, session:st.session}));
+    lifts.forEach(k=>{
+      const ok = st.today[k];
+      if(ok===undefined) return;
+      st.done[k]++;
+      if(ok){
+        st.fails[k]=0;
+        if(LOWER[k]) st.w[k] += inc(k);
+        else if(st.plate125){ st.w[k] += 2.5; }
+        else { // no 1.25 plates: 5 -> 6 -> +5kg
+          const base = baseReps(k);
+          if((st.reps[k]||base) === base) st.reps[k] = base+1;
+          else { st.reps[k] = base; st.w[k] += 5; }
+        }
+      } else {
+        st.fails[k]++;
+        if(st.fails[k]>=3){ st.w[k] = rnd(st.w[k]*0.9, 5); st.fails[k]=0; st.reps[k]=baseReps(k); }
+      }
+      st.w[k] = rnd(st.w[k], step());
+    });
+    st.hist.unshift(snap); st.hist = st.hist.slice(0,5);
+    st.session++; st.today={}; save(); render();
+  }
+  function undo(){
+    const h = st.hist.shift(); if(!h) return;
+    Object.assign(st, h); st.today={}; save(); render();
+  }
+  $('finish').addEventListener('click', finish);
+  $('undo').addEventListener('click', undo);
+
+  function render(){
+    const lifts = isA()?A:B;
+    $('pressLabel').textContent = name('pr');
+    ['sq','bp','dl','pr','row'].forEach(k=>{ $('w_'+k).value = st.w[k]; });
+    $('nextTitle').textContent = (isA()?'A 세션':'B 세션')+' · '+lifts.map(k=>name(k)).join(' · ');
+    $('nextDesc').textContent = '세션 '+(st.session+1)+' · 종목별 무게는 아래 카드에 있습니다. 끝나면 각 종목의 성공/실패를 누르고 "이 세션 완료"를 누르세요.'+(Object.keys(st.today).length?' (입력됨: '+Object.keys(st.today).map(k=>name(k)+(st.today[k]?' ✓':' ✗')).join(', ')+')':'');
+    $('lifts').innerHTML = lifts.map(k=>{
+      const w = st.w[k], reps = targetReps(k), sets = SETS[k];
+      const r = ramp(k, w);
+      let tbl = r.map(([x,rr])=>row(parseFloat(x), rr)).join('') + row(w, sets+'×'+reps, 'work');
+      const t = st.today[k];
+      const btns = t===undefined
+        ? '<button type="button" class="ok" data-k="'+k+'" data-ok="1">성공 '+sets+'×'+reps+'</button><button type="button" class="bad" data-k="'+k+'" data-ok="0">실패</button>'
+        : '<button type="button" disabled>'+(t?'성공으로 기록됨':'실패로 기록됨')+'</button>';
+      const nextInfo = LOWER[k] ? '성공 시 다음 +'+inc(k)+'kg' : (st.plate125 ? '성공 시 다음 +2.5kg' : (reps===baseReps(k) ? '성공 시 다음 '+sets+'×'+(reps+1)+' 같은 무게' : '성공 시 다음 +5kg, '+sets+'×'+baseReps(k)));
+      const fail = st.fails[k] ? '<div class="fail">이 무게에서 실패 '+st.fails[k]+'회 · 3회면 10% 감량</div>' : '';
+      const acc = k==='dl' ? '<div class="acc"><ul><li><span>풀업 또는 랫풀다운</span><span>3×8</span></li><li><span>플랭크</span><span>3×30초</span></li></ul></div>'
+        : (k==='row' ? '<div class="acc"><ul><li><span>플랭크</span><span>3×30초</span></li></ul></div>' : '');
+      return '<article class="lift"><div class="lifthead"><h3>'+name(k)+'</h3><span class="w">'+fmt(w)+'</span></div>'+
+        '<div class="target">작업 세트 <b>'+sets+'×'+reps+'</b> · '+nextInfo+' · 완료 '+st.done[k]+'회</div>'+
+        '<div class="tablewrap"><table><thead><tr><th>kg</th><th>세트×회</th><th>한쪽 원판</th></tr></thead><tbody>'+tbl+'</tbody></table></div>'+
+        '<div class="actions">'+btns+'</div>'+fail+acc+'</article>';
+    }).join('');
+    document.querySelectorAll('#lifts button[data-k]').forEach(b=>b.addEventListener('click',()=>mark(b.dataset.k, b.dataset.ok==='1')));
+    $('undo').disabled = !st.hist.length;
+  }
+  render();
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>

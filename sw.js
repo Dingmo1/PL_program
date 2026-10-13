@@ -1,7 +1,7 @@
 // 점심시간 5/3/1 — 오프라인 캐시. 파일을 갱신하면 VERSION을 올리세요.
-const VERSION = 'v9';
+const VERSION = 'v10';
 const CACHE = 'lunch531-' + VERSION;
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-512-maskable.png'];
+const ASSETS = ['./', './index.html', './beginner.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-512-maskable.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
