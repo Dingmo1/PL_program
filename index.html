@@ -263,7 +263,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       tl:[['0','워밍업'],['10','램프'],['20','탑세트'],['25','백오프 ×4 + 로우'],['40','저처 램프'],['46','저처 ×4'],['60','힙 쓰러스트 · 외회전'],['76','정리']]}
   ];
 
-  const DEF = {sq:150, bp:85, dl:180, tue:'tng', week:0, block:'acc', low:false, deload:false, rpe:{}};
+  const DEF = {sq:160, bp:85, dl:180, tue:'tng', week:0, block:'acc', low:false, deload:false, rpe:{}};
   let st = Object.assign({}, DEF);
   try{ const s = JSON.parse(localStorage.getItem('lpl_v13')||'null'); if(s){ st = Object.assign(st, s); st.rpe = s.rpe||{}; } }catch(e){}
   const save = () => { try{ localStorage.setItem('lpl_v13', JSON.stringify(st)); }catch(e){} };
