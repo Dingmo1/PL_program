@@ -136,7 +136,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       <label class="field"><span class="label">벤치 e1RM (포즈 기준)</span><input id="bp" type="number" step="2.5" inputmode="decimal"><small>터치앤고 e1RM × 0.95 정도</small></label>
       <label class="field"><span class="label">스모 데드 e1RM</span><input id="dl" type="number" step="2.5" inputmode="decimal"><small>kg</small></label>
       <label class="field"><span class="label">화요일 벤치 기술 변형</span>
-        <select id="tue"><option value="tng">터치앤고 벤치</option><option value="cg">클로즈그립 벤치</option></select><small>60% 3×5, 경기 셋업</small></label>
+        <select id="tue"><option value="larsen">Larsen 프레스</option><option value="tng">터치앤고 벤치</option><option value="cg">클로즈그립 벤치</option></select><small id="tuehint"></small></label>
     </div>
     <div class="toggles">
       <label><input type="checkbox" id="low"> 오늘 컨디션 낮음 → 탑세트는 싱글 워크업으로 RPE 8 지점까지만, 나머지 −5% · 백오프 1세트 감소</label>
@@ -182,7 +182,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
         <li><b>백오프(스쿼트·데드):</b> 탑세트보다 4~5%p 낮은 74 → 84%, 스쿼트 4×3, 데드 4×3(1~4주) → 3×3(5~6주). 탑세트 5회가 무거운 세트 역할을 하므로 1주차부터 종목당 주 5세트의 고강도 작업이 들어갑니다.</li>
         <li><b>벤치(금):</b> 백오프는 76% 고정 무게(1~2주차 탑세트와 같은 무게)에 반복 사다리 4×3 → 4×4 → 4×5. 마지막 세트가 RPE 7.5 이하면 다음 주 +1회, 6회를 RPE 8 이하로 채우면 +5kg 후 3회로 리셋.</li>
         <li><b>2차 볼륨:</b> 월 벤치 5세트 @80%에 반복 4 → 5 → 6. 목 스쿼트 72.5 → 78%(80% 미만 유지), 4 → 5세트. 마지막 세트 RPE 8.5 초과 시 남은 세트 −5%.</li>
-        <li><b>변형:</b> 화 포즈 데드(바닥 3~5cm 정지) 3×3 @72 → 80%. 금 저처 4×5 @48 → 58%.</li>
+        <li><b>변형:</b> 화 포즈 데드(바닥 3~5cm 정지) 3×3 @72 → 80%, 화 Larsen 프레스 4×6 @62 → 70%(다리 드라이브 제거, 상배부 고정·바닥 구간 강화). 금 저처 4×5 @48 → 58%.</li>
         <li>6주 뒤 <b>디로드 1주(세트 절반)</b>를 넣고 강화로. 허리 이력 때문에 이 디로드는 고정입니다.</li>
       </ul>
     </div>
@@ -223,7 +223,10 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
   const fmt = x => (Math.round(x*100)/100).toString();
   const $ = id => document.getElementById(id);
   const LIFTN = {sq:'스쿼트', bp:'포즈 벤치', dl:'스모 데드'};
-  const TUEN = {tng:'터치앤고 벤치', cg:'클로즈그립 벤치'};
+  const TUEN = {larsen:'Larsen 프레스 (다리 뻗고, 가슴 1초 정지)', tng:'터치앤고 벤치', cg:'클로즈그립 벤치'};
+  const TUEP = {larsen:[.62,.70,.60], tng:[.60,.60,.60], cg:[.60,.60,.60]}; // [축적 시작%, 축적 끝%, 강화%]
+  const TUES = {larsen:'4×6', tng:'3×5', cg:'3×5'};
+  const tuePct = (B,i) => { const q=TUEP[st.tue]||TUEP.tng; return B==='int' ? q[2] : q[0]+(q[1]-q[0])*(i/5); };
   const CAP = {sq:200, bp:100, dl:210};
 
   const WEEKS = {
@@ -263,13 +266,14 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       tl:[['0','워밍업'],['10','램프'],['20','탑세트'],['25','백오프 ×4 + 로우'],['40','저처 램프'],['46','저처 ×4'],['60','힙 쓰러스트 · 외회전'],['76','정리']]}
   ];
 
-  const DEF = {sq:160, bp:85, dl:180, tue:'tng', week:0, block:'acc', low:false, deload:false, rpe:{}};
+  const DEF = {sq:160, bp:85, dl:180, tue:'larsen', week:0, block:'acc', low:false, deload:false, rpe:{}};
   let st = Object.assign({}, DEF);
   try{ const s = JSON.parse(localStorage.getItem('lpl_v13')||'null'); if(s){ st = Object.assign(st, s); st.rpe = s.rpe||{}; } }catch(e){}
   const save = () => { try{ localStorage.setItem('lpl_v13', JSON.stringify(st)); }catch(e){} };
 
   ['sq','bp','dl'].forEach(k => { $(k).value = st[k]; $(k).addEventListener('input', e => { st[k] = parseFloat(e.target.value)||0; save(); render(); }); });
   $('tue').value = st.tue; $('tue').addEventListener('change', e => { st.tue = e.target.value; save(); render(); });
+  const tueHint = () => { $('tuehint').textContent = st.tue==='larsen' ? '62 → 70% 4×6 · 상배부 고정·바닥 구간' : '60% 3×5 · 경기 셋업·바 스피드'; };
   $('low').checked = !!st.low; $('low').addEventListener('change', e => { st.low = e.target.checked; save(); render(); });
   $('deload').checked = !!st.deload; $('deload').addEventListener('change', e => { st.deload = e.target.checked; save(); render(); });
   $('blockseg').addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; st.block=b.dataset.b; st.week=0; save(); render(); });
@@ -317,6 +321,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     $('blockdesc').textContent = B==='acc' ? '탑세트 5회 @78% → 3회 @89%, 백오프 74 → 84%, 볼륨은 세트·반복으로 증가. 싱글·더블은 강화 블록에서. 체중을 올리는 6주.'
       : B==='int' ? '탑세트 90 → 94% 두 주 뒤, 3주차는 RPE 8 싱글 테스트로 다음 e1RM을 정합니다.'
       : '3주 테이퍼. 볼륨 30~60% 감소, 강도 유지, 종목당 주 2회 유지. 감량 없음.';
+    tueHint();
     $('weeks').innerHTML = W.map((w,i)=>'<button type="button" data-i="'+i+'" aria-pressed="'+(i===st.week)+'">'+w.k+'<span>'+w.t+'</span></button>').join('');
     const low = !!st.low && B!=='peak', dl = !!st.deload && B!=='peak';
     const f = (low?.95:1)*(dl?.95:1);
@@ -392,10 +397,10 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       else if(d.kind==='variant'){
         d.items.forEach(it=>{
           if(it.key==='pdl'){ tbl += sep(it.name+' · 데드 e1RM '+Math.round(wk.pdl*100)+'% · 2분 30초 · RPE 7~8'); tbl += row(r5(st.dl*wk.pdl*f), dl?half(it.sets):it.sets, it.cls); }
-          else { tbl += sep(TUEN[st.tue]+' · 벤치 e1RM 60% · 경기 셋업 · 바 스피드'); tbl += row(r5(st.bp*it.p*f), dl?half(it.sets):it.sets, it.cls); }
+          else { const tp = tuePct(B, st.week), ts = TUES[st.tue]||'3×5'; tbl += sep(TUEN[st.tue]+' · 벤치 e1RM '+Math.round(tp*100)+'%'+(st.tue==='larsen'?' · 마지막 세트 RPE 8 이하':' · 경기 셋업 · 바 스피드')); tbl += row(r5(st.bp*tp*f), dl?half(ts):ts, it.cls); }
         });
         if(B==='int') accf=.5;
-        note='스모 리프터의 약점은 바닥 이탈입니다. 바닥에서 3~5cm 띄운 뒤 1초 정지하고 당깁니다. 바 스피드가 떨어지면 세트를 줄입니다.';
+        note = (st.tue==='larsen' ? 'Larsen: 다리를 곧게 뻗어 발을 바닥에서 떼고, 견갑을 모아 등으로 벤치를 누릅니다. 다리 드라이브 없이 상체만으로 미는 연습이라 첫 주는 RPE 6~7로 균형부터. 몸통이 흔들리면 발을 벤치 위에 올려도 됩니다. ' : '') + '포즈 데드: 스모 리프터의 약점은 바닥 이탈입니다. 바닥에서 3~5cm 띄운 뒤 1초 정지하고 당깁니다. 바 스피드가 떨어지면 세트를 줄입니다.';
       }
       else { // gpp
         accLabel='보조만 · 1~2 RIR · 휴식 60~90초 · 하체 부하 없음';
