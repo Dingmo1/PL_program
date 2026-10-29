@@ -1,8 +1,8 @@
 {
-  "name": "퇴근 후 파워리프팅",
-  "short_name": "PL 프로그램",
-  "description": "주 4회 90분 퇴근 후 파워리프팅 — e1RM 기반 세트 무게와 원판 계산",
-  "start_url": "./index.html",
+  "name": "TSA",
+  "short_name": "TSA",
+  "description": "TSA 9주 중급 파워리프팅 — e1RM 기반 세트 무게와 원판 계산",
+  "start_url": "./tsa.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
