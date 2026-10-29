@@ -155,6 +155,12 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
 (function(){
   const r5 = x => Math.round(x/5)*5;
   const fmt = x => (Math.round(x*100)/100).toString();
+  const sr = s => { s=String(s); let m;
+    if((m=s.match(/^(\d+)×(\d+)(초)(.*)$/))) return m[1]+'세트 '+m[2]+'초'+m[4];
+    if((m=s.match(/^(\d+)×(\d+(?:~\d+)?)(\/[^ ]+)?(.*)$/))) return m[1]+'세트 '+m[2]+'회'+(m[3]||'')+m[4];
+    if((m=s.match(/^(\d+)$/))) return '1세트 '+m[1]+'회';
+    if((m=s.match(/^(\d+) (@\d+(?:\.\d)?|\(선택\)|오프너)$/))) return '1세트 '+m[1]+'회 '+m[2];
+    return s; };
   const $ = id => document.getElementById(id);
   const VARN = {feetup:'피트업 벤치', larsen:'Larsen 프레스', cg:'클로즈그립 벤치'};
   const ROWN = {pendlay:'펜들레이 로우', csr:'체스트 서포티드 로우'};
@@ -186,15 +192,15 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     for(const [p,c] of P){ while(side>=p-1e-9){ side-=p; html+='<i class="pl '+c+'"></i>'; list.push(p); } }
     return html+'<span class="pltext">'+list.join('+')+'</span>';
   }
-  const row = (w, reps, cls) => '<tr class="'+(cls||'')+'"><td class="w">'+fmt(w)+'</td><td class="r">'+reps+'</td><td><div class="plates">'+plates(w)+'</div></td></tr>';
+  const row = (w, reps, cls) => '<tr class="'+(cls||'')+'"><td class="w">'+fmt(w)+'</td><td class="r">'+sr(reps)+'</td><td><div class="plates">'+plates(w)+'</div></td></tr>';
   const sep = t => '<tr class="sep"><td colspan="3">'+t+'</td></tr>';
   const half = s => s.replace(/^(\d+)/, m => Math.max(1, Math.ceil(m/2)));
   const pct = p => Math.round(p*100)+'%';
 
   function card(dow, name, tbl, acc, accf, note, time){
-    const accItems = acc.filter(()=>accf>0).map(([n,s])=>'<li><span>'+n+'</span><span>'+(accf<1?half(s):s)+'</span></li>').join('');
+    const accItems = acc.filter(()=>accf>0).map(([n,s])=>'<li><span>'+n+'</span><span>'+sr(accf<1?half(s):s)+'</span></li>').join('');
     const accBlock = accItems ? '<div class="acc"><div class="label">보조 · RPE 7~8.5 · 90초'+(accf<1?' · 세트 절반':'')+'</div><ul>'+accItems+'</ul></div>' : '';
-    const table = tbl ? '<div class="tablewrap"><table><thead><tr><th>kg</th><th>회</th><th>한쪽 원판</th></tr></thead><tbody>'+tbl+'</tbody></table></div>' : '';
+    const table = tbl ? '<div class="tablewrap"><table><thead><tr><th>kg</th><th>세트 · 회</th><th>한쪽 원판</th></tr></thead><tbody>'+tbl+'</tbody></table></div>' : '';
     return '<article class="day"><div class="dayhead"><span class="dow">'+dow+'</span><h3>'+name+'</h3><span class="time">'+time+'</span></div>'+table+accBlock+(note?'<div class="note">'+note+'</div>':'')+'</article>';
   }
 

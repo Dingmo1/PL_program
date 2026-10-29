@@ -221,6 +221,12 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
   const r25 = x => Math.round(x/2.5)*2.5;
   const r5 = x => Math.round(x/5)*5;
   const fmt = x => (Math.round(x*100)/100).toString();
+  const sr = s => { s=String(s); let m;
+    if((m=s.match(/^(\d+)×(\d+)(초)(.*)$/))) return m[1]+'세트 '+m[2]+'초'+m[4];
+    if((m=s.match(/^(\d+)×(\d+(?:~\d+)?)(\/[^ ]+)?(.*)$/))) return m[1]+'세트 '+m[2]+'회'+(m[3]||'')+m[4];
+    if((m=s.match(/^(\d+)$/))) return '1세트 '+m[1]+'회';
+    if((m=s.match(/^(\d+) (@\d+(?:\.\d)?|\(선택\)|오프너)$/))) return '1세트 '+m[1]+'회 '+m[2];
+    return s; };
   const $ = id => document.getElementById(id);
   const LIFTN = {sq:'스쿼트', bp:'포즈 벤치', dl:'스모 데드'};
   const TUEN = {larsen:'Larsen 프레스 (다리 뻗고, 가슴 1초 정지)', tng:'터치앤고 벤치', cg:'클로즈그립 벤치'};
@@ -286,7 +292,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     for(const [p,c] of P){ while(side>=p-1e-9){ side-=p; html+='<i class="pl '+c+'"></i>'; list.push(p); } }
     return html+'<span class="pltext">'+list.join('+')+'</span>';
   }
-  const row = (w, reps, cls) => '<tr class="'+(cls||'')+'"><td class="w">'+fmt(w)+'</td><td class="r">'+reps+'</td><td><div class="plates">'+plates(w)+'</div></td></tr>';
+  const row = (w, reps, cls) => '<tr class="'+(cls||'')+'"><td class="w">'+fmt(w)+'</td><td class="r">'+sr(reps)+'</td><td><div class="plates">'+plates(w)+'</div></td></tr>';
   const sep = t => '<tr class="sep"><td colspan="3">'+t+'</td></tr>';
   const half = s => s.replace(/^(\d+)/, m => Math.max(1, Math.ceil(m/2)));
   const halfSets = n => Math.max(1, Math.ceil(n/2));
@@ -409,9 +415,9 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       }
 
       if(dl) accf = Math.min(accf,.5);
-      const accItems = d.acc.filter(()=>accf>0).map(([n,s,opt])=>'<li'+(opt?' class="opt"':'')+'><span>'+n+(opt?' (선택)':'')+'</span><span>'+(accf<1?half(s):s)+'</span></li>').join('');
+      const accItems = d.acc.filter(()=>accf>0).map(([n,s,opt])=>'<li'+(opt?' class="opt"':'')+'><span>'+n+(opt?' (선택)':'')+'</span><span>'+sr(accf<1?half(s):s)+'</span></li>').join('');
       const accBlock = accItems ? '<div class="acc"><div class="label">'+accLabel+(accf<1?' · 세트 절반':'')+'</div><ul>'+accItems+'</ul></div>' : '';
-      const table = tbl ? '<div class="tablewrap"><table><thead><tr><th>kg</th><th>회</th><th>한쪽 원판</th></tr></thead><tbody>'+tbl+'</tbody></table></div>' : '';
+      const table = tbl ? '<div class="tablewrap"><table><thead><tr><th>kg</th><th>세트 · 회</th><th>한쪽 원판</th></tr></thead><tbody>'+tbl+'</tbody></table></div>' : '';
       const tl = (B==='acc' && d.tl) ? '<div class="tl">'+d.tl.map(([m,t])=>'<span><b>'+m+'′</b>'+t+'</span>').join('')+'</div>' : '';
       const time = B==='peak' ? '약 45분' : (d.kind==='gpp' ? '약 50분' : (d.kind==='variant' ? '약 75분' : '약 85분'));
       return '<article class="day"><div class="dayhead"><span class="dow">'+d.dow+'</span><h3>'+name+'</h3><span class="time">'+time+'</span></div>'+table+accBlock+tl+(note?'<div class="note">'+note+'</div>':'')+'</article>';

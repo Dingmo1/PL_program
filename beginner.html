@@ -188,6 +188,12 @@ tr.work td.w,tr.work td.r{color:var(--accent)}
   const $ = id => document.getElementById(id);
   const rnd = (x, step) => Math.round(x/step)*step;
   const fmt = x => (Math.round(x*100)/100).toString();
+  const sr = s => { s=String(s); let m;
+    if((m=s.match(/^(\d+)×(\d+)(초)(.*)$/))) return m[1]+'세트 '+m[2]+'초'+m[4];
+    if((m=s.match(/^(\d+)×(\d+(?:~\d+)?)(\/[^ ]+)?(.*)$/))) return m[1]+'세트 '+m[2]+'회'+(m[3]||'')+m[4];
+    if((m=s.match(/^(\d+)$/))) return '1세트 '+m[1]+'회';
+    if((m=s.match(/^(\d+) (@\d+(?:\.\d)?|\(선택\)|오프너)$/))) return '1세트 '+m[1]+'회 '+m[2];
+    return s; };
   const KEY = 'pl_beginner_v1';
 
   const DEF = {w:{sq:40, bp:20, dl:40, pr:20, row:20}, reps:{bp:5, pr:5, row:8}, fails:{sq:0,bp:0,dl:0,pr:0,row:0}, done:{sq:0,bp:0,dl:0,pr:0,row:0}, session:0, plate125:false, noOHP:false, today:{}, hist:[]};
@@ -218,11 +224,11 @@ tr.work td.w,tr.work td.r{color:var(--accent)}
     if(side>0.01) return html+'<span class="pltext">'+list.join('+')+' (+'+fmt(side)+' 부족)</span>';
     return html+'<span class="pltext">'+list.join('+')+'</span>';
   }
-  const row = (w, reps, cls) => '<tr class="'+(cls||'')+'"><td class="w">'+fmt(w)+'</td><td class="r">'+reps+'</td><td><div class="plates">'+plates(w)+'</div></td></tr>';
+  const row = (w, reps, cls) => '<tr class="'+(cls||'')+'"><td class="w">'+fmt(w)+'</td><td class="r">'+sr(reps)+'</td><td><div class="plates">'+plates(w)+'</div></td></tr>';
 
   function ramp(k, w){
     // ramp sets: bar, 50%, 70%, 85% (skip those below bar+5)
-    const out=[['20','×10']]; const pcts=[.5,.7,.85]; const reps=['×5','×3','×2'];
+    const out=[['20','1세트 10회']]; const pcts=[.5,.7,.85]; const reps=['1세트 5회','1세트 3회','1세트 2회'];
     pcts.forEach((p,i)=>{ const x = rnd(w*p, step()); if(x>22.5 && x<w) out.push([fmt(x), reps[i]]); });
     return out;
   }
@@ -278,13 +284,13 @@ tr.work td.w,tr.work td.r{color:var(--accent)}
       const btns = t===undefined
         ? '<button type="button" class="ok" data-k="'+k+'" data-ok="1">성공 '+sets+'×'+reps+'</button><button type="button" class="bad" data-k="'+k+'" data-ok="0">실패</button>'
         : '<button type="button" disabled>'+(t?'성공으로 기록됨':'실패로 기록됨')+'</button>';
-      const nextInfo = LOWER[k] ? '성공 시 다음 +'+inc(k)+'kg' : (st.plate125 ? '성공 시 다음 +2.5kg' : (reps===baseReps(k) ? '성공 시 다음 '+sets+'×'+(reps+1)+' 같은 무게' : '성공 시 다음 +5kg, '+sets+'×'+baseReps(k)));
+      const nextInfo = LOWER[k] ? '성공 시 다음 +'+inc(k)+'kg' : (st.plate125 ? '성공 시 다음 +2.5kg' : (reps===baseReps(k) ? '성공 시 다음 '+sets+'세트 '+(reps+1)+'회 같은 무게' : '성공 시 다음 +5kg, '+sets+'세트 '+baseReps(k)+'회'));
       const fail = st.fails[k] ? '<div class="fail">이 무게에서 실패 '+st.fails[k]+'회 · 3회면 10% 감량</div>' : '';
-      const acc = k==='dl' ? '<div class="acc"><ul><li><span>풀업 또는 랫풀다운</span><span>3×8</span></li><li><span>플랭크</span><span>3×30초</span></li></ul></div>'
-        : (k==='row' ? '<div class="acc"><ul><li><span>플랭크</span><span>3×30초</span></li></ul></div>' : '');
+      const acc = k==='dl' ? '<div class="acc"><ul><li><span>풀업 또는 랫풀다운</span><span>3세트 8회</span></li><li><span>플랭크</span><span>3세트 30초</span></li></ul></div>'
+        : (k==='row' ? '<div class="acc"><ul><li><span>플랭크</span><span>3세트 30초</span></li></ul></div>' : '');
       return '<article class="lift"><div class="lifthead"><h3>'+name(k)+'</h3><span class="w">'+fmt(w)+'</span></div>'+
-        '<div class="target">작업 세트 <b>'+sets+'×'+reps+'</b> · '+nextInfo+' · 완료 '+st.done[k]+'회</div>'+
-        '<div class="tablewrap"><table><thead><tr><th>kg</th><th>세트×회</th><th>한쪽 원판</th></tr></thead><tbody>'+tbl+'</tbody></table></div>'+
+        '<div class="target">작업 세트 <b>'+sets+'세트 '+reps+'회</b> · '+nextInfo+' · 완료 '+st.done[k]+'회</div>'+
+        '<div class="tablewrap"><table><thead><tr><th>kg</th><th>세트 · 회</th><th>한쪽 원판</th></tr></thead><tbody>'+tbl+'</tbody></table></div>'+
         '<div class="actions">'+btns+'</div>'+fail+acc+'</article>';
     }).join('');
     document.querySelectorAll('#lifts button[data-k]').forEach(b=>b.addEventListener('click',()=>mark(b.dataset.k, b.dataset.ok==='1')));
