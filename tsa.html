@@ -129,7 +129,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
         <li><b>6~8주:</b> 메인 싱글(RPE 8 → 8.5 → 9) 뒤 백오프. 볼륨 세트는 3×3~4로 줄고 강도는 80~90%.</li>
         <li><b>9주:</b> 월 스쿼트·벤치 오프너 싱글, 화 데드 오프너, 목 휴식, 금(또는 토) 세 종목 테스트 또는 대회.</li>
         <li>싱글이 느리면 그 무게에서 멈추고 백오프 −5%. 1RM이 틀렸다고 느껴지면 블록이 끝나고 고칩니다.</li>
-        <li>보조는 RPE 7~8.5, 세트 간 90초. 시간이 넘치면 마지막 보조부터 뺍니다.</li>
+        <li>보조는 RPE 7~8.5(0~2 RIR), 세트 간 90초. 반복 상한을 전부 채우면 다음 주 무게를 올립니다. 6~8주차는 보조 세트 절반. 시간이 넘치면 마지막 보조부터 뺍니다.</li>
       </ul>
     </div>
     <div class="rule">
@@ -216,7 +216,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       out += card('금','테스트 · 대회', sep('스쿼트 → 벤치 → 데드 · 1차 90% · 2차 96% · 3차 100~102%')+row(r5(SQ*.90),'S 1차','single')+row(r5(SQ*.96),'S 2차','single')+row(r5(SQ*1.0),'S 3차','single')+row(r5(BP*.90),'B 1차','single')+row(r5(BP*.96),'B 2차','single')+row(r5(BP*1.0),'B 3차','single')+row(r5(DL*.90),'D 1차','single')+row(r5(DL*.96),'D 2차','single')+row(r5(DL*1.0),'D 3차','single'), [], 0, '종목 간 20분 휴식. 명령 붙여서. 결과를 e1RM에 입력하면 다음 사이클이 계산됩니다.', '약 2시간');
       $('days').innerHTML = out; return;
     }
-    const deload = i===4, accf = deload ? .5 : 1;
+    const deload = i===4, accf = (deload || i>=5) ? .5 : 1;
     // Monday
     let t='';
     const [tr,tp,bs,bpc] = SQ1[i];
@@ -234,7 +234,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     // Thursday
     t='';
     t += sep((deload?'디로드 · ':'')+'<em>스쿼트 볼륨</em> · '+pct(SQ3[i][1])); t += row(r5(SQ*SQ3[i][1]), SQ3[i][0], 'sup');
-    out += card('목','스쿼트 볼륨', t, [['인클라인 덤벨 벤치 (15~30°)','3×8~10'],['레그프레스','3×8~10'],['체스트 서포티드 로우','3×10~12']], accf, '모든 세트 같은 속도. 마지막 세트 RPE 8 초과 시 다음 세트 −5%.', '약 80분');
+    out += card('목','스쿼트 볼륨 + 하체 보조', t, [['인클라인 덤벨 벤치 (15~30°)','3×8~10'],['레그컬','3×10~12'],['불가리안 스플릿 스쿼트','2×8~10/다리'],['체스트 서포티드 로우','3×10~12'],['레그 익스텐션 (선택)','2×12~15']], accf, '모든 세트 같은 속도. 마지막 세트 RPE 8 초과 시 다음 세트 −5%. 하체 보조는 RPE 7~8, 레그컬이 우선(햄스트링 직접 볼륨). 6~8주차는 세트 절반, 9주차는 없음.', '약 85분');
     // Friday
     t='';
     const [bsg,bbs,bbp] = BP4[i];
