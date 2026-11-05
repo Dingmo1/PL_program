@@ -100,7 +100,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
       <label class="field"><span class="label">벤치 e1RM (포즈)</span><input id="bp" type="number" step="2.5" inputmode="decimal"><small>kg</small></label>
       <label class="field"><span class="label">데드 e1RM</span><input id="dl" type="number" step="2.5" inputmode="decimal"><small>kg</small></label>
       <label class="field"><span class="label">금요일 벤치 변형</span>
-        <select id="var"><option value="feetup">피트업 벤치</option><option value="larsen">Larsen 프레스</option><option value="cg">클로즈그립</option></select><small>3×6 RPE 7</small></label>
+        <select id="var"><option value="feetup">피트업 벤치</option><option value="larsen">Larsen 프레스</option><option value="cg">클로즈그립</option><option value="dips">중량 딥스</option></select><small>3세트 6회 RPE 7 · 딥스는 3세트 6~8회</small></label>
       <label class="field"><span class="label">화요일 로우</span>
         <select id="row"><option value="pendlay">펜들레이 로우</option><option value="csr">체스트 서포티드 로우</option></select><small>허리 피로 시 CSR</small></label>
     </div>
@@ -162,7 +162,7 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     if((m=s.match(/^(\d+) (@\d+(?:\.\d)?|\(선택\)|오프너)$/))) return '1세트 '+m[1]+'회 '+m[2];
     return s; };
   const $ = id => document.getElementById(id);
-  const VARN = {feetup:'피트업 벤치', larsen:'Larsen 프레스', cg:'클로즈그립 벤치'};
+  const VARN = {feetup:'피트업 벤치', larsen:'Larsen 프레스', cg:'클로즈그립 벤치', dips:'중량 딥스'};
   const ROWN = {pendlay:'펜들레이 로우', csr:'체스트 서포티드 로우'};
 
   // [top reps, top %, backoff sets×reps, backoff %]  (null top = none)
@@ -246,9 +246,14 @@ tr.sep td em{font-style:normal;color:var(--fg);font-weight:500}
     const [bsg,bbs,bbp] = BP4[i];
     if(bsg){ t += sep('<em>벤치 싱글</em> · RPE '+bsg+' · 시작 '+pct(SINGLE[bsg])); t += row(r5(BP*SINGLE[bsg]), '1', 'single'); }
     t += sep((deload?'디로드 · ':'')+'벤치 백오프 · '+pct(bbp)); t += row(r5(BP*bbp), bbs, bsg?'heavy':'sup');
-    t += sep(VARN[st.var]+' · RPE 7'); t += row(r5(BP*(deload?.55:.65)), deload?'2×6':'3×6', 'tech');
+    if(st.var==='dips'){
+      const dw = i===7 ? '체중' : '체중 + 중량', dr = i===7 ? '2×6' : (accf<1 ? '2×6' : '3×6~8');
+      t += sep('중량 딥스 · RPE 7~8'); t += '<tr class="tech"><td class="w">'+dw+'</td><td class="r">'+sr(dr)+'</td><td><small>3세트 8회 RPE 7 이하면 +5kg</small></td></tr>';
+    } else {
+      t += sep(VARN[st.var]+' · RPE 7'); t += row(r5(BP*(deload?.55:.65)), deload?'2×6':'3×6', 'tech');
+    }
     t += sep('포즈 데드 · '+pct(PDL[i][1])); t += row(r5(DL*PDL[i][1]), PDL[i][0], 'tech');
-    out += card('금','벤치 헤비 + 포즈 데드', t, [['벤트오버 로우 또는 덤벨 로우','3×6~8'],['랫풀다운','3×10~12']], accf, '벤치 싱글은 세이프티 바 가슴 높이, 콜라 없이. 포즈 데드는 무릎 아래 1초.', '약 90분');
+    out += card('금','벤치 헤비 + 포즈 데드', t, [['벤트오버 로우 또는 덤벨 로우','3×6~8'],['랫풀다운','3×10~12']], accf, (st.var==='dips' ? '딥스: 상완 평행까지, 상체 15~20° 전경, 팔꿈치 몸통에. 첫 2주는 체중 3세트 8회로 자세 고정. 이 날 푸쉬다운은 생략. ' : '')+'벤치 싱글은 세이프티 바 가슴 높이, 콜라 없이. 포즈 데드는 무릎 아래 1초.', '약 90분');
     $('days').innerHTML = out;
   }
   render();
